@@ -6,7 +6,7 @@ DOMAIN-SUFFIX,tellapart.com
 DOMAIN-SUFFIX,tweetdeck.com
 DOMAIN-SUFFIX,twimg.co
 DOMAIN-SUFFIX,twimg.com
-DOMAIN-SUFFIX,video.twimg.com
+DOMAIN-KEYWORD,video.twimg
 DOMAIN-SUFFIX,twimg.org
 DOMAIN-SUFFIX,twitpic.com
 DOMAIN-SUFFIX,twitter.com
