@@ -5,7 +5,6 @@
       {"tag": "fake-ip-dns-server", "type": "fakeip", "inet4_range": "198.18.0.0/15", "inet6_range": "fc00::/18"}
     ],
     "rules": [
-      {"query_type": "HTTPS", "action": "reject"},
       {"clash_mode": "direct", "server": "local"},
       {"clash_mode": "global", "server": "local"},
       {"rule_set": ["private_domain", "cn_domain"], "server": "fake-ip-dns-server", "invert": true}
