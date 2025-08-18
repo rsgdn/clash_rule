@@ -1,0 +1,88 @@
+{
+  "dns": {
+    "servers": [
+      {"tag": "local", "type": "udp", "server": "116.116.116.116"},
+      {"tag": "foreign", "type": "udp", "server": "1.1.1.1"}
+    ],
+    "rules": [
+      {"clash_mode": "direct", "server": "local"},
+      {"clash_mode": "global", "server": "local"},
+      {"rule_set": ["private_domain", "cn_domain"], "server": "local"}
+    ],
+    "final": "foreign",
+    "independent_cache": true
+  },
+  "outbounds": [
+    {"tag": "🟠 科学", "type": "selector", "outbounds": ["♻️ 自动选择", "🐸 手动选择"]},
+    {"tag": "🇯🇵 D&D", "type": "selector", "outbounds": ["{all}"], "filter": [{"action": "include", "keywords": ["日本"]}, {"action": "exclude", "keywords": ["免费"]}]},
+    {"tag": "🐼 Exhentai", "type": "selector", "outbounds": ["♻️ 自动选择", "🐸 手动选择"]},
+    {"tag": "♻️ 自动选择", "type": "urltest", "outbounds": ["{all}"], "filter": [{"action": "exclude", "keywords": ["官网|到期时间|剩余|流量|套餐|免费|订阅|全球直连|GB|Expire Date|Traffic|ExpireDate"]}], "interval": "10m", "tolerance": 100},
+    {"tag": "🐸 手动选择", "type": "selector", "outbounds": ["{all}"], "filter": [{"action": "exclude", "keywords": ["网站|流量|地址|剩余|过期|免费|时间|有效|套餐|Traffic|ExpireDate|GB|Expire Date"]}]},
+    {"tag": "GLOBAL", "type": "selector", "outbounds": ["🟠 科学", "🐸 手动选择", "♻️ 自动选择", "🟢 直连"]},
+    {"tag": "🟢 直连", "type": "direct"}
+  ],
+  "route": {
+    "rules": [
+      {"action": "sniff", "sniffer": ["http", "tls", "quic", "dns"]},
+      {"type": "logical", "mode": "or", "rules": [{"port": 53}, {"protocol": "dns"}], "action": "hijack-dns"},
+      {"ip_is_private": true, "outbound": "🟢 直连"},
+      {"clash_mode": "direct", "outbound": "🟢 直连"},
+      {"clash_mode": "global", "outbound": "GLOBAL"},
+      {"rule_set": "private_ip", "outbound": "🟢 直连"},
+      {"rule_set": "private_domain", "outbound": "🟢 直连"},
+      {"rule_set": "dmm_domain", "outbound": "🇯🇵 D&D"},
+      {"rule_set": "dlsite_domain", "outbound": "🇯🇵 D&D"},
+      {"rule_set": "ehentai_domain", "outbound": "🐼 Exhentai"},
+      {"rule_set": "steam-cn_domain", "outbound": "🟢 直连"},
+      {"rule_set": "cn_domain", "outbound": "🟢 直连"},
+      {"rule_set": "cn_ip", "outbound": "🟢 直连"}
+    ],
+    "rule_set": [
+      {"tag": "steam-cn_domain", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/steam@cn.srs", "download_detour": "🟠 科学"},
+      {"tag": "dmm_domain", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/dmm.srs", "download_detour": "🟠 科学"},
+      {"tag": "dlsite_domain", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/dlsite.srs", "download_detour": "🟠 科学"},
+      {"tag": "ehentai_domain", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/ehentai.srs", "download_detour": "🟠 科学"},
+      {"tag": "private_domain", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/private.srs", "download_detour": "🟠 科学"},
+      {"tag": "cn_domain", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.srs", "download_detour": "🟠 科学"},
+      {"tag": "private_ip", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/private.srs", "download_detour": "🟠 科学"},
+      {"tag": "cn_ip", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/cn.srs", "download_detour": "🟠 科学"}
+    ],
+    "final": "🟠 科学",
+    "auto_detect_interface": true,
+    "default_domain_resolver": {"server": "foreign"}
+  },
+  "inbounds": [
+    {
+      "tag": "tun-in",
+      "type": "tun",
+      "address": [
+        "172.19.0.1/30",
+        "fdfe:dcba:9876::1/126"
+      ],
+      "mtu": 9000,
+      "auto_route": true,
+      "auto_redirect": true,
+      "strict_route": true
+    }
+  ],
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "/etc/momo/run/cache.db",
+      "store_fakeip": false
+    },
+    "clash_api": {
+      "external_controller": "0.0.0.0:9095",
+      "external_ui": "/etc/momo/run/ui",
+      "external_ui_download_url": "https://gh-proxy.com/https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip",
+      "external_ui_download_detour": "🟠 科学",
+      "secret": "",
+      "default_mode": "rule"
+    }
+  },
+  "log": {
+    "disabled": false,
+    "level": "info",
+    "timestamp": true
+  }
+}
